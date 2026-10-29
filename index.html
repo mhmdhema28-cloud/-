@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>عيادة الشفاء - تطبيق الموبايل</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0088cc;
+            --primary-dark: #005580;
+            --secondary: #00b4d8;
+            --light-bg: #f4f9f9;
+            --text-dark: #2b2d42;
+            --text-light: #6c757d;
+            --white: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--light-bg);
+            color: var(--text-dark);
+            line-height: 1.5;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* شاشة التنبيه للكمبيوتر واللاب توب */
+        .desktop-warning {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: var(--primary-dark);
+            color: var(--white);
+            z-index: 99999;
+            text-align: center;
+            padding: 40px 20px;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .desktop-warning i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            color: var(--secondary);
+        }
+
+        .desktop-warning h2 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+
+        .desktop-warning p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        /* إخفاء التطبيق على الشاشات الكبيرة */
+        @media (min-width: 769px) {
+            .mobile-app-content {
+                display: none !important;
+            }
+            .desktop-warning {
+                display: flex !important;
+            }
+        }
+
+        /* الهيدر */
+        header {
+            background-color: var(--white);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            padding: 12px 15px;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .call-btn-head {
+            background-color: var(--primary);
+            color: var(--white);
+            padding: 8px 14px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* قسم الترحيب */
+        .hero {
+            background: linear-gradient(135deg, rgba(0,136,204,0.1) 0%, rgba(0,180,216,0.2) 100%);
+            padding: 30px 15px;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 1.5rem;
+            color: var(--primary-dark);
+            margin-bottom: 10px;
+        }
+
+        .hero p {
+            color: var(--text-light);
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            background-color: var(--primary);
+            color: var(--white);
+            padding: 14px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: bold;
+            text-align: center;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            box-shadow: 0 4px 10px rgba(0,136,204,0.3);
+        }
+
+        .section {
+            padding: 25px 15px;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            color: var(--primary-dark);
+            margin-bottom: 15px;
+            text-align: right;
+            border-right: 4px solid var(--primary);
+            padding-right: 10px;
+        }
+
+        /* قائمة الخدمات */
+        .services-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .service-card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        .service-card i {
+            font-size: 1.8rem;
+            color: var(--secondary);
+            width: 45px;
+            height: 45px;
+            background: rgba(0,180,216,0.1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .service-card h3 {
+            font-size: 1.05rem;
+            margin-bottom: 3px;
+        }
+
+        .service-card p {
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+
+        /* كروت الأطباء مع صور واضحة */
+        .doctors-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .doctor-card {
+            background: var(--white);
+            border-radius: 15px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .doctor-img {
+            width: 75px;
+            height: 75px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--secondary);
+            flex-shrink: 0;
+        }
+
+        .doctor-info h3 {
+            font-size: 1.1rem;
+            color: var(--primary-dark);
+            margin-bottom: 4px;
+        }
+
+        .doctor-info .spec {
+            font-size: 0.85rem;
+            color: var(--primary);
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        .doctor-info .exp {
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+
+        /* نموذج الحجز */
+        .booking-section {
+            background-color: var(--white);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            outline: none;
+            background-color: #fafafa;
+        }
+
+        /* معلومات التواصل */
+        .info-box {
+            background: var(--white);
+            padding: 15px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+        }
+
+        .info-box i {
+            font-size: 1.3rem;
+            color: var(--primary);
+        }
+
+        .info-box h4 {
+            font-size: 0.95rem;
+        }
+
+        .info-box p {
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+
+        footer {
+            background-color: var(--primary-dark);
+            color: var(--white);
+            text-align: center;
+            padding: 20px 15px;
+            font-size: 0.85rem;
+            margin-top: 20px;
+        }
+
+        #confirmation-msg {
+            display: none;
+            background-color: #d4edda;
+            color: #155724;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-size: 0.9rem;
+            text-align: center;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- رسالة تحذير لأجهزة اللاب توب والكمبيوتر -->
+    <div class="desktop-warning">
+        <i class="fas fa-mobile-alt"></i>
+        <h2>الموقع مخصص للموبايل فقط</h2>
+        <p>يرجى فتح الموقع من هاتفك المحمول للحصول على تجربة تصفح كاملة وحجز المواعيد.</p>
+    </div>
+
+    <!-- المحتوى الخاص بمتصفح الموبايل -->
+    <div class="mobile-app-content">
+
+        <header>
+            <div class="nav-container">
+                <div class="logo">
+                    <i class="fas fa-user-md"></i>
+                    <span>عيادة الشفاء</span>
+                </div>
+                <a href="tel:+201234567890" class="call-btn-head">
+                    <i class="fas fa-phone"></i> اتصل بنا
+                </a>
+            </div>
+        </header>
+
+        <section class="hero">
+            <h1>رعايتكم وصحتكم أولويتنا</h1>
+            <p>احجز موعدك الطبي مع نخبة من أطبائنا بسهولة وسرعة من موبايلك.</p>
+            <a href="#booking" class="btn">احجز موعدك الآن</a>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">خدماتنا الطبية</h2>
+            <div class="services-list">
+                <div class="service-card">
+                    <i class="fas fa-stethoscope"></i>
+                    <div>
+                        <h3>الفحص الشامل</h3>
+                        <p>تشخيص دقيق وفحوصات دورية شاملة للأسرة.</p>
+                    </div>
+                </div>
+                <div class="service-card">
+                    <i class="fas fa-heartbeat"></i>
+                    <div>
+                        <h3>أمراض القلب والشرايين</h3>
+                        <p>متابعة وتخطيط القلب بأحدث الأجهزة الطبية.</p>
+                    </div>
+                </div>
+                <div class="service-card">
+                    <i class="fas fa-tooth"></i>
+                    <div>
+                        <h3>طب وجراحة الأسنان</h3>
+                        <p>تنظيف، تجميل، وعلاج الأسنان بآلية حديثة.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">أطباء العيادة</h2>
+            <div class="doctors-list">
+                <div class="doctor-card">
+                    <img src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=300&q=80" alt="د. أحمد النجار" class="doctor-img">
+                    <div class="doctor-info">
+                        <h3>د. أحمد النجار</h3>
+                        <div class="spec">استشاري أمراض القلب والباطنة</div>
+                        <div class="exp">خبرة أكثر من 15 عاماً</div>
+                    </div>
+                </div>
+                <div class="doctor-card">
+                    <img src="https://images.unsplash.com/photo-1594824813566-88824278c4a6?auto=format&fit=crop&w=300&q=80" alt="د. سارة محمود" class="doctor-img">
+                    <div class="doctor-info">
+                        <h3>د. سارة محمود</h3>
+                        <div class="spec">أخصائية طب الأطفال حديثي الولادة</div>
+                        <div class="exp">خبرة 10 سنوات</div>
+                    </div>
+                </div>
+                <div class="doctor-card">
+                    <img src="https://images.unsplash.com/photo-1537368910025-700350fe46c7?auto=format&fit=crop&w=300&q=80" alt="د. كريم عادل" class="doctor-img">
+                    <div class="doctor-info">
+                        <h3>د. كريم عادل</h3>
+                        <div class="spec">أخصائي جراحة وطب الأسنان</div>
+                        <div class="exp">خبرة 8 سنوات</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="booking" class="section">
+            <h2 class="section-title">حجز موعد</h2>
+            <div class="booking-section">
+                <form id="bookingForm">
+                    <div class="form-group">
+                        <label>الاسم بالكامل</label>
+                        <input type="text" id="name" required placeholder="أدخل اسمك الكريم">
+                    </div>
+                    <div class="form-group">
+                        <label>رقم الهاتف</label>
+                        <input type="tel" id="phone" required placeholder="01XXXXXXXXX">
+                    </div>
+                    <div class="form-group">
+                        <label>اختر الطبيب / العيادة</label>
+                        <select id="doctor" required>
+                            <option value="">اختر...</option>
+                            <option value="د. أحمد النجار - القلب والباطنة">د. أحمد النجار - القلب والباطنة</option>
+                            <option value="د. سارة محمود - الأطفال">د. سارة محمود - الأطفال</option>
+                            <option value="د. كريم عادل - الأسنان">د. كريم عادل - الأسنان</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>تاريخ الموعد</label>
+                        <input type="date" id="date" required>
+                    </div>
+                    <button type="submit" class="btn">تأكيد الحجز الآن</button>
+                </form>
+                <div id="confirmation-msg"></div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">مواعيد العمل والتواصل</h2>
+            <div class="info-box">
+                <i class="fas fa-clock"></i>
+                <div>
+                    <h4>مواعيد العمل</h4>
+                    <p>السبت - الخميس: 9:00 ص - 10:00 م</p>
+                </div>
+            </div>
+            <div class="info-box">
+                <i class="fas fa-map-marker-alt"></i>
+                <div>
+                    <h4>العنوان</h4>
+                    <p>القاهرة، شارع الصحة، مبنى 12</p>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <p>&copy; 2026 عيادة الشفاء - جميع الحقوق محفوظة</p>
+        </footer>
+
+    </div>
+
+    <script>
+        document.getElementById('bookingForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = document.getElementById('name').value;
+            const doctor = document.getElementById('doctor').value;
+            const date = document.getElementById('date').value;
+            
+            const msgBox = document.getElementById('confirmation-msg');
+            msgBox.style.display = 'block';
+            msgBox.innerHTML = `تم تسجبل طلب الحجز بنجاح يا أ/ <strong>${name}</strong>!<br>الموعد مع: <strong>${doctor}</strong><br>التاريخ: <strong>${date}</strong><br>سنقوم بالتواصل معك هاتفياً للتأكيد.`;
+            
+            this.reset();
+        });
+    </script>
+</body>
+</html>
